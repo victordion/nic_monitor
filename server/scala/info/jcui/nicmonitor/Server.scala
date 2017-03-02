@@ -11,6 +11,7 @@ import com.twitter.finagle.http
 import com.twitter.util.{Await, Future}
 import org.json4s.native.Json
 import org.json4s.DefaultFormats
+import com.twitter.finagle.http.filter.Cors
 
 
 object Server extends TwitterServer {
@@ -45,6 +46,7 @@ object Server extends TwitterServer {
 
               Console.println(s"Returned result: $tsToSizeMap")
               val response = http.Response(req.version, http.Status.Ok)
+              response.headerMap.add("Access-Control-Allow-Origin", "*")
 
               val jsonString = Json(DefaultFormats).write(tsToSizeMap)
 
