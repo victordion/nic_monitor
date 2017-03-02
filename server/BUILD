@@ -1,0 +1,19 @@
+scala_library(
+  name='scala',
+  dependencies=[
+    '3rdparty/jvm/org/json4s:json4s-native',
+    'util/util-core/src/main/scala:scala',
+    'twitter-server-internal/src/main/scala',
+    'querulous/querulous-core/src/main/scala:scala',
+  ],
+  sources=rglobs('*.scala')
+)
+
+jvm_binary(
+  name='nic-monitor-server',
+  basename='nic-monitor-server',
+  main='info.jcui.nicmonitor.Server',
+  dependencies=[
+    ':scala',
+  ]
+)
