@@ -15,7 +15,7 @@
 
     var currentTimeInSeconds = (new Date).getTime() / 1000;
 
-    var response = httpGet("http://jcui.info:9991/rx?endTimeStamp=" + currentTimeInSeconds + "&spanInMinutes=60");
+    var response = httpGet("http://jcui.info:9991/rx?endTimeStamp=" + currentTimeInSeconds + "&spanInMinutes=600");
 
     console.log(response);
 
