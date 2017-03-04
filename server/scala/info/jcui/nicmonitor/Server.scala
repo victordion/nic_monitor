@@ -8,11 +8,9 @@ import scala.info.jcui.nicmonitor.MySQLClient
 import scala.util.Random
 import com.twitter.finagle.{Http, Service}
 import com.twitter.finagle.http
-import com.twitter.util.{Await, Future}
+import com.twitter.util.{Time, Await, Future}
 import org.json4s.native.Json
 import org.json4s.DefaultFormats
-import com.twitter.finagle.http.filter.Cors
-
 
 object Server extends TwitterServer {
 
@@ -68,6 +66,7 @@ object Server extends TwitterServer {
 
           }
         }
+
       }
 
       val task = new Runnable {
