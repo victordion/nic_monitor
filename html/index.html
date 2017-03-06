@@ -1,6 +1,16 @@
 <html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>NIC monitor</title>
+    <link href="main.css" rel="stylesheet" type="text/css">
+</head>
 <body>
-<canvas id="myChart" width="40" height="40"></canvas>
+<div class="display-container">
+    <canvas id="myChart" class="chart"></canvas>
+    <div class="controls-container">
+        Span In minutes <input type=number id="SpanInMinutes" value=10>
+        <a id="refresh-button" class="refresh-button">Refresh</a>
+    </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.js"></script>
 <script>
@@ -13,81 +23,85 @@
         return xmlHttp.responseText;
     }
 
+    var ctx = document.getElementById("myChart");
     var currentTimeInSeconds = (new Date).getTime() / 1000;
+    var refreshButton = document.getElementById('refresh-button');
 
-    var response = httpGet("http://jcui.info:9991/rx?endTimeStamp=" + currentTimeInSeconds + "&spanInMinutes=600");
-
-    console.log(response);
-
-    var obj = JSON.parse(response);
-
-    var labels = Object.keys(obj);
-
-    var times = [];
-
-    for(var i = 0; i < labels.length; i++) {
-        times.push(new Date(parseInt(labels[i]) * 1000).toLocaleTimeString())
-    }
-
-    var rawdata = Object.values(obj);
-
-    var usage = [];
-    for (i = 0; i < rawdata.length; i++) {
-        if(i == 0) {
-            usage.push(0)
+    function draw(spanInMinutes) {
+        var response = httpGet("http://jcui.info:9991/rx?endTimeStamp=" + currentTimeInSeconds + "&spanInMinutes=" + spanInMinutes);
+        console.log(response);
+        var obj = JSON.parse(response);
+        var labels = Object.keys(obj);
+        var times = [];
+        for (var i = 0; i < labels.length; i++) {
+            times.push(new Date(parseInt(labels[i]) * 1000).toLocaleTimeString())
         }
-        else {
-            usage.push(rawdata[i] - rawdata[i-1])
-        }
-    }
+        var rawdata = Object.values(obj);
 
-
-    console.log("Current time in seconds is " + currentTimeInSeconds)
-    console.log(times);
-    console.log(usage);
-
-    var data = {
-        labels: times,
-        datasets: [
-            {
-                label: "RX Usage on jcui.info",
-                fill: false,
-                lineTension: 0.1,
-                backgroundColor: "rgba(75,192,192,0.4)",
-                borderColor: "rgba(75,192,192,1)",
-                borderCapStyle: 'butt',
-                borderDash: [],
-                borderDashOffset: 0.0,
-                borderJoinStyle: 'miter',
-                pointBorderColor: "rgba(75,192,192,1)",
-                pointBackgroundColor: "#fff",
-                pointBorderWidth: 1,
-                pointHoverRadius: 5,
-                pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                pointHoverBorderColor: "rgba(220,220,220,1)",
-                pointHoverBorderWidth: 2,
-                pointRadius: 1,
-                pointHitRadius: 10,
-                data: usage,
-                spanGaps: false,
+        var usage = [];
+        for (i = 0; i < rawdata.length; i++) {
+            if (i == 0) {
+                usage.push(0)
             }
-        ]
+            else {
+                usage.push(rawdata[i] - rawdata[i - 1])
+            }
+        }
+
+        console.log("Current time in seconds is " + currentTimeInSeconds)
+        console.log(times);
+        console.log(usage);
+
+        var data = {
+            labels: times,
+            datasets: [
+                {
+                    label: "RX Usage on jcui.info",
+                    fill: false,
+                    lineTension: 0.1,
+                    backgroundColor: "rgba(75,192,192,0.4)",
+                    borderColor: "rgba(75,192,192,1)",
+                    borderCapStyle: 'butt',
+                    borderDash: [],
+                    borderDashOffset: 0.0,
+                    borderJoinStyle: 'miter',
+                    pointBorderColor: "rgba(75,192,192,1)",
+                    pointBackgroundColor: "#fff",
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                    pointHoverBorderColor: "rgba(220,220,220,1)",
+                    pointHoverBorderWidth: 2,
+                    pointRadius: 1,
+                    pointHitRadius: 10,
+                    data: usage,
+                    spanGaps: false,
+                }
+            ]
+        };
+
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    }
+
+    refreshButton.onclick = function() {
+        var spanInMinutes = document.getElementById("SpanInMinutes").value;
+        draw(spanInMinutes);
     };
 
-    var ctx = document.getElementById("myChart");
-    var myChart = new Chart(ctx, {
-        type: 'line',
-        data: data,
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            }
-        }
-    });
+    draw(10);
+
 </script>
 
 </html>

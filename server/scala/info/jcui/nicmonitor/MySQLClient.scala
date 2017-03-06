@@ -21,7 +21,6 @@ class MySQLClient(host: String, username: String, password: String) {
       );
      """
 
-
   statement.executeUpdate(createTableSql)
 
   def write(ts: Long, tx: Long, rx: Long): Unit = {

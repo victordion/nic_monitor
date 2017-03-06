@@ -79,8 +79,6 @@ object Server extends TwitterServer {
 
             dataStoreClient.write(ts, tx, rx)
 
-            //Console.println(s"Writing $ts, $tx, $rx")
-
           } catch {
             case e: Throwable =>
               e.printStackTrace()
