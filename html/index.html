@@ -27,6 +27,7 @@
 
     xmlHttp.onload = function(e) {
         if (xmlHttp.status === 200) {
+            console.log(xmlHttp)
             var spanInMinutes = document.getElementById("SpanInMinutes").value;
             draw(spanInMinutes);
         } else {
@@ -42,7 +43,6 @@
 
     var spanInMinutes = document.getElementById("SpanInMinutes").value;
     httpGet("http://jcui.info:9991/rx?endTimeStamp=" + currentTimeInSeconds() + "&spanInMinutes=" + spanInMinutes);
-    draw(10);
 
     function currentTimeInSeconds() {
         return (new Date).getTime() / 1000
@@ -56,25 +56,26 @@
     function draw(spanInMinutes) {
         var response = xmlHttp.response;
         console.log(response);
+        console.log(typeof(response));
         var obj = JSON.parse(response);
         var labels = Object.keys(obj);
         var times = [];
         for (var i = 0; i < labels.length; i++) {
-            times.push(new Date(parseInt(labels[i]) * 1000).toLocaleTimeString())
+            times.push(new Date(parseInt(labels[i]) * 1000).toLocaleTimeString());
         }
 
-        //var rawdata = Object.values(obj);
-        var rawdata = Object.keys(obj).map(function(key) {
+        var rawdata = labels.map(function(key) {
+            console.log(typeof(obj[key]));
             return obj[key];
         });
 
         var usage = [];
         for (i = 0; i < rawdata.length; i++) {
             if (i == 0) {
-                usage.push(0)
+                usage.push(0);
             }
             else {
-                usage.push(rawdata[i] - rawdata[i - 1])
+                usage.push(rawdata[i] - rawdata[i - 1]);
             }
         }
 

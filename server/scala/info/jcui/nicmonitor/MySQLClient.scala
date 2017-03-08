@@ -1,6 +1,5 @@
 package scala.info.jcui.nicmonitor
 
-
 import java.sql.{ResultSet, DriverManager, Connection}
 
 /**
@@ -10,7 +9,8 @@ class MySQLClient(host: String, username: String, password: String) {
   Class.forName("com.mysql.jdbc.Driver")
   val driver = "com.mysql.jdbc.Driver"
   val url = "jdbc:mysql://" + host + ":3306/nic"
-  val connection: Connection = DriverManager.getConnection(url, username, password)
+  val connection: Connection =
+    DriverManager.getConnection(url, username, password)
   val statement = connection.createStatement()
 
   val createTableSql = """ CREATE TABLE IF NOT EXISTS nic_status
@@ -29,9 +29,13 @@ class MySQLClient(host: String, username: String, password: String) {
     Console.println("Writing to DB: " + sql)
   }
 
-  def read(timeSpanInMinutes: Long, endTimeStamp: Long, byteType: String): Map[Long, Long] = {
+  def read(timeSpanInMinutes: Long,
+           endTimeStamp: Long,
+           byteType: String): Map[Long, Long] = {
     val startTimeStamp = endTimeStamp - timeSpanInMinutes * 60
-    val selectQuery = "SELECT ts, %s FROM nic.nic_status WHERE ts > %d AND ts < %d;".format(byteType, startTimeStamp, endTimeStamp)
+    val selectQuery =
+      "SELECT ts, %s FROM nic.nic_status WHERE ts > %d AND ts < %d;"
+        .format(byteType, startTimeStamp, endTimeStamp)
 
     Console.println(s"Reading to DB: $selectQuery")
 
@@ -39,7 +43,7 @@ class MySQLClient(host: String, username: String, password: String) {
 
     val ret = new scala.collection.mutable.HashMap[Long, Long]
 
-    while(resultSet.next()) {
+    while (resultSet.next()) {
       val ts = resultSet.getLong(1)
       val data = resultSet.getLong(2)
       ret += (ts -> data)
