@@ -63,7 +63,10 @@
             times.push(new Date(parseInt(labels[i]) * 1000).toLocaleTimeString())
         }
 
-        var rawdata = Object.values(obj);
+        //var rawdata = Object.values(obj);
+        var rawdata = Object.keys(obj).map(function(key) {
+            return obj[key];
+        });
 
         var usage = [];
         for (i = 0; i < rawdata.length; i++) {
