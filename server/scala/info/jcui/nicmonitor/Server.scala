@@ -5,10 +5,9 @@ import java.util.concurrent._
 import sys.process._
 import com.twitter.finagle.http.Method
 import scala.info.jcui.nicmonitor.MySQLClient
-import scala.util.Random
 import com.twitter.finagle.{Http, Service}
 import com.twitter.finagle.http
-import com.twitter.util.{Time, Await, Future}
+import com.twitter.util.{Await, Future}
 import org.json4s.native.Json
 import org.json4s.DefaultFormats
 
@@ -19,7 +18,6 @@ object Server extends TwitterServer {
 
   def main(): Unit = {
     try {
-      val random = new Random
       val dataStoreClient = new MySQLClient("localhost", username(), password())
       val ex = new ScheduledThreadPoolExecutor(1)
 
@@ -36,21 +34,27 @@ object Server extends TwitterServer {
               val endTimeStamp = req.getLongParam("endTimeStamp")
               val spanInMinutes = req.getLongParam("spanInMinutes")
 
-              Console.println(s"endTimeStamp = $endTimeStamp")
-              Console.println(s"spanInMinutes = $spanInMinutes")
+              // If the span is longer than 10 hours, reject this request
+              if(spanInMinutes > 600) {
+                val response = http.Response(req.version, http.Status.Ok)
+                response.setContentString("spanInMinutes > 600 which is not allowed")
+                Future.value(response)
+              } else {
+                Console.println(s"endTimeStamp = $endTimeStamp")
+                Console.println(s"spanInMinutes = $spanInMinutes")
 
-              val byteType = if(path == "/tx") "tx" else "rx"
-              val tsToSizeMap = dataStoreClient.read(spanInMinutes, endTimeStamp, byteType)
+                val byteType = if (path == "/tx") "tx" else "rx"
+                val tsToSizeMap = dataStoreClient.read(spanInMinutes, endTimeStamp, byteType)
 
-              Console.println(s"Returned result: $tsToSizeMap")
-              val response = http.Response(req.version, http.Status.Ok)
-              response.headerMap.add("Access-Control-Allow-Origin", "*")
+                Console.println(s"Returned result: $tsToSizeMap")
+                val response = http.Response(req.version, http.Status.Ok)
+                response.headerMap.add("Access-Control-Allow-Origin", "*")
 
-              val jsonString = Json(DefaultFormats).write(tsToSizeMap)
+                val jsonString = Json(DefaultFormats).write(tsToSizeMap)
 
-              response.setContentString(jsonString)
-
-              Future(response)
+                response.setContentString(jsonString)
+                Future.value(response)
+              }
 
             } else {
               val response = http.Response(req.version, http.Status.Ok)
@@ -66,19 +70,15 @@ object Server extends TwitterServer {
 
           }
         }
-
       }
 
       val task = new Runnable {
         override def run(): Unit = {
           try {
             val ts: Long = System.currentTimeMillis() / 1000
-
             val rx = ("cat /sys/class/net/eth0/statistics/rx_bytes" lineStream_!).head.toLong
             val tx = ("cat /sys/class/net/eth0/statistics/tx_bytes" lineStream_!).head.toLong
-
             dataStoreClient.write(ts, tx, rx)
-
           } catch {
             case e: Throwable =>
               e.printStackTrace()
