@@ -1,7 +1,9 @@
-body
+body, html
 {
     background-color: #FCFCFC;
+    height: 100%;
 }
+
 
 .chart
 {
@@ -16,10 +18,10 @@ body
 
 .display-container
 {
-    /*width: 1600px;
-    height: 800px;
-    */
+    width: 1000px;
+    height: 500px;
     margin: 0 auto;
+
 }
 
 .button {
