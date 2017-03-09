@@ -9,7 +9,7 @@ It is often very useful to monitor network traffic on your server's NIC (network
 This project aims at creating a service running on your VPS, monitoring NIC traffic and persisting data into MySQL database. It also maintains a RESTful HTTP service for requests of such data. The data can be displayed in very flexible ways by the frontend. The project can also be extended to monitor and persist other critical server information, such as CPU usage, memory usage, you name it.
 
 # Example
-The code is deployed to jcui.info and a visualizatio of NIC traffic on this host is at http://jcui.info/nicmonitor/
+The code is deployed to jcui.info and a visualization of NIC traffic on this host is at http://jcui.info/nicmonitor/
 
 ## Usage
 ### Dependency management and build tool 
@@ -17,10 +17,10 @@ We use pants to build the project. For installation guide please refer to http:/
 
 To build the project into a fat jar
 ```
-./pants binary untitled/nic_monitor/server:nic-monitor-server
+$ ./pants binary untitled/nic_monitor/server:nic-monitor-server
 ```
 
 Run the jar on your server
 ```
-java -jar nic-monitor-server.jar -username <your-mysql-username> -password <your-mysql-password>
+$ java -jar nic-monitor-server.jar -username <your-mysql-username> -password <your-mysql-password>
 ```
