@@ -3,7 +3,7 @@
 
     <meta charset="UTF-8">
     <title>NIC monitor</title>
-    <link href="main.css" rel="stylesheet" type="text/css">
+    <link href="main.css" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -26,6 +26,8 @@
     var ctx = document.getElementById("myChart");
     var refreshButton = document.getElementById('refresh-button');
     var goLiveButton = document.getElementById('go-live-button');
+
+
 
     var myChart = null;
     var data = null;
@@ -65,6 +67,10 @@
     }
 
     function draw(spanInMinutes) {
+
+        ctx.width  = window.innerWidth;
+        ctx.height = window.innerHeight;
+
         var response = xmlHttp.response;
         console.log(response);
         console.log(typeof(response));
