@@ -10,8 +10,8 @@
 <body>
 
 <div class="display-container">
-    <canvas id="rxChart" class="chart"></canvas>
-    <canvas id="txChart" class="chart"></canvas>
+    <canvas id="rxChart" class="chart" ></canvas>
+    <canvas id="txChart" class="chart" ></canvas>
     <div class="controls-container">
         Span In minutes <input type=number id="SpanInMinutes" value=1>
         <button id="refresh-button" class="button">Refresh</button>
@@ -19,6 +19,7 @@
         <button id="stop-live-button" class="button">Stop Live</button>
     </div>
 </div>
+
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.js"></script>
@@ -32,8 +33,8 @@
 
     var refreshIntervalId;
 
-    var rxChart;
-    var txChart;
+    var rxChart = null;
+    var txChart = null;
 
 
     stopLiveButton.onclick = function() {
@@ -63,13 +64,13 @@
 
     function refreshRxData(spanInMinutes, currentTimeInSeconds) {
         var url = "http://jcui.info:9991/rx?endTimeStamp=" + currentTimeInSeconds + "&spanInMinutes=" + spanInMinutes;
-        console.log("Requesting " + url);
+        //console.log("Requesting " + url);
         return makeHttpGet(url)
     }
 
     function refreshTxData(spanInMinutes, currentTimeInSeconds) {
         var url = "http://jcui.info:9991/tx?endTimeStamp=" + currentTimeInSeconds + "&spanInMinutes=" + spanInMinutes;
-        console.log("Requesting " + url);
+        //console.log("Requesting " + url);
         return makeHttpGet(url)
     }
 
@@ -81,7 +82,7 @@
 
         xmlHttpForRx.onload = function(e) {
             if (xmlHttpForRx.status === 200) {
-                console.log("Response for xmlHttpForRx: " + xmlHttpForRx.response);
+                //console.log("Response for xmlHttpForRx: " + xmlHttpForRx.response);
                 draw("RX usage", rxContext, rxChart, xmlHttpForRx);
             } else {
                 console.log("RX HTTP request does not get Status 200 as response status");
@@ -90,7 +91,7 @@
 
         xmlHttpForTx.onload = function(e) {
             if (xmlHttpForTx.status === 200) {
-                console.log("Response for xmlHttpForTx: " + xmlHttpForTx.response);
+                //console.log("Response for xmlHttpForTx: " + xmlHttpForTx.response);
                 draw("TX usage", txContext, txChart, xmlHttpForTx);
             } else {
                 console.log("TX HTTP request does not get Status 200 as response status");
@@ -99,10 +100,10 @@
     }
 
     function draw(title, ctx, chart, xmlHttp) {
-        console.log("Entering draw");
+        //console.log("Entering draw");
         var response = xmlHttp.response;
 
-        console.log("Response : " + response);
+        //console.log("Response : " + response);
         var obj = JSON.parse(response);
         var labels = Object.keys(obj);
 
@@ -125,9 +126,9 @@
             }
         }
 
-        console.log("Current time in seconds is " + getCurrentTimeInSeconds());
-        console.log(times);
-        console.log(usage);
+        //console.log("Current time in seconds is " + getCurrentTimeInSeconds());
+        //console.log(times);
+        //console.log(usage);
 
         var data = {
             labels: times,
@@ -157,30 +158,32 @@
             ]
         };
 
-        if(chart != undefined ){
-            chart.destroy()
-        }
-
-        chart = new Chart(ctx, {
-            type: 'bar',
-            data: data,
-            options: {
-                animation:false,
-                scales: {
-                    xAxes: [{
-                        categoryPercentage: 1.0,
-                        barPercentage: 1.0
-                    }],
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            max: 5e6
-                        },
-                        type: 'logarithmic'
-                    }]
+        if(chart != null ){
+            chart.destroy();
+            chart.data = data;
+            chart.update();
+        } else {
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    animation: false,
+                    scales: {
+                        xAxes: [{
+                            categoryPercentage: 1.0,
+                            barPercentage: 1.0
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                max: 5e6
+                            },
+                            type: 'logarithmic'
+                        }]
+                    }
                 }
-            }
-        });
+            });
+        }
 
     }
 
