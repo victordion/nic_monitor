@@ -21,33 +21,15 @@ body
     margin: 0 auto;
 }
 
-.refresh-button {
-    -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
-    -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
-    box-shadow:inset 0px 1px 0px 0px #ffffff;
-    background-color:#f9f9f9;
-    -webkit-border-top-left-radius:3px;
-    -moz-border-radius-topleft:3px;
-    border-top-left-radius:3px;
-    -webkit-border-top-right-radius:3px;
-    -moz-border-radius-topright:3px;
-    border-top-right-radius:3px;
-    -webkit-border-bottom-right-radius:3px;
-    -moz-border-radius-bottomright:3px;
-    border-bottom-right-radius:3px;
-    -webkit-border-bottom-left-radius:3px;
-    -moz-border-radius-bottomleft:3px;
-    border-bottom-left-radius:3px;
-    text-indent:0;
-    border:1px solid #dcdcdc;
-    color:#666666;
-    font-family:Arial;
-    font-size:15px;
-    font-weight:bold;
-    font-style:normal;
-    height:40px;
-    line-height:40px;
-    text-decoration:none;
-    text-align:center;
-    text-shadow:1px 1px 0px #ffffff;
+.button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
 }

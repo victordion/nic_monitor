@@ -12,10 +12,11 @@
 <div class="display-container">
     <canvas id="myChart" class="chart"></canvas>
     <div class="controls-container">
-        Span In minutes <input type=number id="SpanInMinutes" value=10>
-        <a id="refresh-button" class="refresh-button">Refresh</a>
+        Span In minutes <input type=number id="SpanInMinutes" value=1>
+        <button id="refresh-button" class="button">Refresh</button>
+        <button id="go-live-button" class="button">Go Live</button>
     </div>
-</div>>
+</div>
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.js"></script>
@@ -24,6 +25,10 @@
     var xmlHttp = new XMLHttpRequest();
     var ctx = document.getElementById("myChart");
     var refreshButton = document.getElementById('refresh-button');
+    var goLiveButton = document.getElementById('go-live-button');
+
+    var myChart = null;
+    var data = null;
 
     xmlHttp.onload = function(e) {
         if (xmlHttp.status === 200) {
@@ -38,6 +43,13 @@
     refreshButton.onclick = function() {
         var spanInMinutes = document.getElementById("SpanInMinutes").value;
         httpGet("http://jcui.info:9991/rx?endTimeStamp=" + currentTimeInSeconds() + "&spanInMinutes=" + spanInMinutes);
+    };
+
+    goLiveButton.onclick = function() {
+        setInterval(function(){
+            var spanInMinutes = document.getElementById("SpanInMinutes").value;
+            httpGet("http://jcui.info:9991/rx?endTimeStamp=" + currentTimeInSeconds() + "&spanInMinutes=" + spanInMinutes);
+        }, 1000);
     };
 
     var spanInMinutes = document.getElementById("SpanInMinutes").value;
@@ -64,7 +76,6 @@
         }
 
         var rawdata = labels.map(function(key) {
-            console.log(typeof(obj[key]));
             return obj[key];
         });
 
@@ -82,7 +93,7 @@
         console.log(times);
         console.log(usage);
 
-        var data = {
+        data = {
             labels: times,
             datasets: [
                 {
@@ -109,20 +120,22 @@
                 }
             ]
         };
-
-        var myChart = new Chart(ctx, {
+        if(myChart != null ){
+            myChart.destroy()
+        };
+        myChart = new Chart(ctx, {
             type: 'line',
             data: data,
             options: {
+                animation:false,
                 scales: {
                     yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
+                        type: 'logarithmic'
                     }]
                 }
             }
         });
+
     }
 
 
