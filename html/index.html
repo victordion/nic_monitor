@@ -15,6 +15,7 @@
         Span In minutes <input type=number id="SpanInMinutes" value=1>
         <button id="refresh-button" class="button">Refresh</button>
         <button id="go-live-button" class="button">Go Live</button>
+        <button id="stop-live-button" class="button">Stop Live</button>
     </div>
 </div>
 
@@ -26,8 +27,9 @@
     var ctx = document.getElementById("myChart");
     var refreshButton = document.getElementById('refresh-button');
     var goLiveButton = document.getElementById('go-live-button');
+    var stopLiveButton = document.getElementById('stop-live-button');
 
-
+    var refreshIntervalId = undefined;
 
     var myChart = null;
     var data = null;
@@ -42,13 +44,19 @@
         }
     };
 
+    stopLiveButton.onclick = function() {
+        if(refreshIntervalId != undefined) {
+            clearInterval(refreshIntervalId);
+        }
+    };
+
     refreshButton.onclick = function() {
         var spanInMinutes = document.getElementById("SpanInMinutes").value;
         httpGet("http://jcui.info:9991/rx?endTimeStamp=" + currentTimeInSeconds() + "&spanInMinutes=" + spanInMinutes);
     };
 
     goLiveButton.onclick = function() {
-        setInterval(function(){
+        refreshIntervalId = setInterval(function(){
             var spanInMinutes = document.getElementById("SpanInMinutes").value;
             httpGet("http://jcui.info:9991/rx?endTimeStamp=" + currentTimeInSeconds() + "&spanInMinutes=" + spanInMinutes);
         }, 1000);
@@ -130,12 +138,20 @@
             myChart.destroy()
         };
         myChart = new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: data,
             options: {
                 animation:false,
                 scales: {
+                    xAxes: [{
+                        categoryPercentage: 1.0,
+                        barPercentage: 1.0
+                    }],
                     yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            max: 5e6
+                        },
                         type: 'logarithmic'
                     }]
                 }
