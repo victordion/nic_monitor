@@ -10,6 +10,7 @@ This project aims at creating a service running on your VPS, monitoring NIC traf
 
 # Example
 The code is deployed to jcui.info and a visualization of NIC traffic on this host is at http://jcui.info/nicmonitor/
+![Alt text](https://cloud.githubusercontent.com/assets/7118674/23784197/73308510-0515-11e7-875e-4315b47f0ecf.png "Example Chart")
 
 ## Usage
 ### Dependency management and build tool 
