@@ -14,7 +14,8 @@ import org.json4s.DefaultFormats
 object Server extends TwitterServer {
 
   val username = flag[String]("username", "root", "username of MySQL DB")
-  val password = flag[String]("password", "", "passowrd of MySQL DB")
+  val password =
+    flag[String]("password", System.getenv("MYSQL_PW"), "passowrd of MySQL DB")
 
   def main(): Unit = {
     try {
