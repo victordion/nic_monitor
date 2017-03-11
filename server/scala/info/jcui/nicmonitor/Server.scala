@@ -53,7 +53,7 @@ object Server extends TwitterServer {
                 val tsToSizeMap =
                   dataStoreClient.read(spanInMinutes, endTimeStamp, byteType)
 
-                Console.println(s"Returned result: $tsToSizeMap")
+                //Console.println(s"Returned result: $tsToSizeMap")
 
                 val jsonString = Json(DefaultFormats).write(tsToSizeMap)
 

@@ -11,7 +11,6 @@ class MySQLClient(host: String, username: String, password: String) {
   val url = "jdbc:mysql://" + host + ":3306/nic"
   val connection: Connection =
     DriverManager.getConnection(url, username, password)
-  val statement = connection.createStatement()
 
   val createTableSql = """ CREATE TABLE IF NOT EXISTS nic_status
       (ts BIGINT NOT NULL,
@@ -20,11 +19,13 @@ class MySQLClient(host: String, username: String, password: String) {
        PRIMARY KEY (ts)
       );
      """
-
+  val statement = connection.createStatement()
   statement.executeUpdate(createTableSql)
+  statement.close()
 
   def write(ts: Long, tx: Long, rx: Long): Unit = {
     val sql = "INSERT INTO nic_status VALUES (%d, %d, %d)".format(ts, tx, rx)
+    val statement = connection.createStatement()
     statement.executeUpdate(sql)
     Console.println("Writing to DB: " + sql)
   }
@@ -39,6 +40,7 @@ class MySQLClient(host: String, username: String, password: String) {
 
     Console.println(s"Reading to DB: $selectQuery")
 
+    val statement = connection.createStatement()
     val resultSet: ResultSet = statement.executeQuery(selectQuery)
 
     val ret = new scala.collection.mutable.HashMap[Long, Long]
